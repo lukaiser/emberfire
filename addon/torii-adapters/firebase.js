@@ -1,7 +1,7 @@
 import Ember from 'ember';
 
 export default Ember.Object.extend({
-  firebaseApp: Ember.inject.service(),
+  firebase: Ember.inject.service(),
 
   /**
    * Extacts session information from authentication response
@@ -48,7 +48,7 @@ export default Ember.Object.extend({
    * @private
    */
   fetchRedirectState_() {
-    let auth = this.get('firebaseApp').auth();
+    let auth = this.get('firebase').auth();
     return auth.getRedirectResult()
       .then(result => result.user);
   },
@@ -62,7 +62,7 @@ export default Ember.Object.extend({
    */
   fetchAuthState_() {
     return new Ember.RSVP.Promise((resolve, reject) => {
-      let auth = this.get('firebaseApp').auth();
+      let auth = this.get('firebase').auth();
       const unsub = auth.onAuthStateChanged((user) => {
         unsub();
         resolve(user);
@@ -81,7 +81,7 @@ export default Ember.Object.extend({
    * @return {Promise}
    */
   close() {
-    return this.get('firebaseApp').auth().signOut();
+    return this.get('firebase').auth().signOut();
   },
 
   /**

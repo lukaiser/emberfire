@@ -4,7 +4,7 @@ import Waitable from '../mixins/waitable';
 const { getOwner } = Ember;
 
 export default Ember.Object.extend(Waitable, {
-  firebaseApp: Ember.inject.service(),
+  firebase: Ember.inject.service(),
 
   open(options) {
     var providerId = options.provider;
@@ -14,7 +14,7 @@ export default Ember.Object.extend(Waitable, {
       return reject(new Error('`provider` must be supplied'));
     }
 
-    var auth = this.get('firebaseApp').auth();
+    var auth = this.get('firebase').auth();
 
     switch (providerId) {
       case 'password':
