@@ -1,7 +1,7 @@
 {
   "name": "emberfire",
   "description": "The officially supported Ember binding for Firebase",
-  "version": "2.0.11",
+  "version": "2.0.12",
   "author": "Firebase (https://firebase.google.com/)",
   "homepage": "https://github.com/firebase/emberfire/",
   "directories": {
@@ -50,7 +50,8 @@
     "broccoli-webpack": "^1.0.0",
     "chalk": "1.1.3",
     "ember-cli-babel": "6.17.1",
-    "ember-firebase-service": "^4.1.1"
+    "ember-firebase-service": "^4.1.1",
+    "firebase": "^4.13.0"
   },
   "devDependencies": {
     "babelify": "6.4.0",
