@@ -31,10 +31,13 @@
   "ember-addon": {
     "configPath": "tests/dummy/config",
     "fastbootDependencies": [
-      "firebase"
+      "firebase/app",
+      "firebase/auth",
+      "firebase/database"
     ]
   },
   "dependencies": {
+    "@firebase/database": "^0.3.6",
     "broccoli-merge-trees": "^3.0.1",
     "broccoli-webpack": "^1.0.0",
     "chalk": "2.4.1",
@@ -48,6 +51,7 @@
     "codeclimate-test-reporter": "^0.5.1",
     "del": "3.0.0",
     "ember-ajax": "4.0.0",
+    "ember-auto-import": "^1.2.15",
     "ember-cli": "3.5.0",
     "ember-cli-app-version": "^3.2.0",
     "ember-cli-code-coverage": "^0.4.2",
@@ -76,13 +80,5 @@
     "normalize-css": "^2.3.1",
     "sinon": "^7.1.1",
     "torii": "0.10.1"
-  },
-  "ember-addon": {
-    "configPath": "tests/dummy/config",
-    "fastbootDependencies": [
-      "firebase/app",
-      "firebase/auth",
-      "firebase/database"
-    ]
   }
 }
