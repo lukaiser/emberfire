@@ -12,7 +12,7 @@ module.exports = {
     this._super.included.apply(this, arguments);
 
     app.import('node_modules/firebase/firebase-app.js');
-    app.import('node_modules/firebase/firebase-auth.js');
-    app.import('node_modules/firebase/firebase-database.js');
+    //app.import('node_modules/firebase/firebase-auth.js');
+    //app.import('node_modules/firebase/firebase-database.js');
   },
 };
