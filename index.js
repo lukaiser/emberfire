@@ -4,6 +4,15 @@
 module.exports = {
   name: 'emberfire',
 
+  options: {
+    autoImport:{
+      exclude: [],
+      webpack: {
+        // extra webpack configuration goes here
+      }
+    }
+  },
+
   treeForVendor(defaultTree) {
     return defaultTree
   },
