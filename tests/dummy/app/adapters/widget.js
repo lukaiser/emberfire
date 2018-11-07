@@ -1,9 +1,9 @@
-import Ember from 'ember';
+import { resolve } from 'rsvp';
 import DS from 'ember-data';
 
 export default DS.JSONAPIAdapter.extend({
   findAll: function() {
-    return Ember.RSVP.resolve({
+    return resolve({
       data: [{
         id: '1',
         type: 'widget',
@@ -15,7 +15,7 @@ export default DS.JSONAPIAdapter.extend({
   },
 
   createRecord: function() {
-    return Ember.RSVP.resolve({
+    return resolve({
       data: {
         id: '2',
         type: 'widget',
@@ -29,7 +29,7 @@ export default DS.JSONAPIAdapter.extend({
   updateRecord: function(store, typeClass, snapshot) {
     const id = snapshot.id;
 
-    return Ember.RSVP.resolve({
+    return resolve({
       data: {
         id: id,
         type: 'widget',

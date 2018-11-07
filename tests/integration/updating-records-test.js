@@ -1,4 +1,8 @@
-import Ember from 'ember';
+import { capitalize } from '@ember/string';
+import { A } from '@ember/array';
+import { computed } from '@ember/object';
+import { Promise, all } from 'rsvp';
+import { run } from '@ember/runloop';
 import DS from 'ember-data';
 import startApp from 'dummy/tests/helpers/start-app';
 import destroyApp from 'dummy/tests/helpers/destroy-app';
@@ -7,8 +11,6 @@ import stubFirebase from 'dummy/tests/helpers/stub-firebase';
 import unstubFirebase from 'dummy/tests/helpers/unstub-firebase';
 import createTestRef from 'dummy/tests/helpers/create-test-ref';
 import replaceAppRef from 'dummy/tests/helpers/replace-app-ref';
-
-const { run } = Ember;
 
 describe('Integration: FirebaseAdapter - Updating records', function() {
   var app, store, adapter, firebaseTestRef;
@@ -61,7 +63,7 @@ describe('Integration: FirebaseAdapter - Updating records', function() {
         it('writes the hasMany relationship link', function(done) {
           run(() => {
             newComment.save().then(function (c) {
-              Ember.RSVP.Promise.cast(newPost.get('comments')).then(function(comments) {
+              Promise.cast(newPost.get('comments')).then(function(comments) {
                 comments.pushObject(newComment);
                 newPost.save().then(function() {
                   reference.once('value', function(data) {
@@ -92,7 +94,7 @@ describe('Integration: FirebaseAdapter - Updating records', function() {
                 expect(newComment.get('hasDirtyAttributes')).to.equal(true, 'the item should be dirty');
                 expect(newComment.get('isNew')).to.equal(false, 'the item should not be `new`');
 
-                Ember.RSVP.Promise.cast(newPost.get('comments')).then(function(comments) {
+                Promise.cast(newPost.get('comments')).then(function(comments) {
                   comments.pushObject(newComment);
                   newPost.save().then(function() {
                     reference.once('value', function(data) {
@@ -123,8 +125,8 @@ describe('Integration: FirebaseAdapter - Updating records', function() {
             });
             secondCommentId = secondComment.get('id');
 
-            Ember.RSVP.all([newComment.save(), secondComment.save()]).then(function () {
-              Ember.RSVP.Promise.cast(newPost.get('comments')).then(function(comments) {
+            all([newComment.save(), secondComment.save()]).then(function () {
+              Promise.cast(newPost.get('comments')).then(function(comments) {
                 comments.pushObject(newComment);
                 comments.pushObject(secondComment);
                 newPost.save().then(function() {
@@ -143,7 +145,7 @@ describe('Integration: FirebaseAdapter - Updating records', function() {
           expect(postData.comments[commentId]).to.equal(true, 'the first hasMany link should exist before removal');
           expect(postData.comments[secondCommentId]).to.equal(true, 'the second hasMany link should exist before removal');
 
-          Ember.RSVP.Promise.cast(newPost.get('comments')).then(function(comments) {
+          Promise.cast(newPost.get('comments')).then(function(comments) {
             comments.removeObject(secondComment);
             newPost.save().then(function() {
               reference.once('value', function(data) {
@@ -163,7 +165,7 @@ describe('Integration: FirebaseAdapter - Updating records', function() {
           expect(postData.comments[commentId]).to.equal(true, 'the first hasMany link should exist before removal');
           expect(postData.comments[secondCommentId]).to.equal(true, 'the second hasMany link should exist before removal');
 
-          Ember.RSVP.Promise.cast(newPost.get('comments')).then(function(comments) {
+          Promise.cast(newPost.get('comments')).then(function(comments) {
             comments.removeObject(newComment);
             comments.removeObject(secondComment);
             newPost.save().then(function() {
@@ -200,7 +202,7 @@ describe('Integration: FirebaseAdapter - Updating records', function() {
           postId = newPost.get('id');
           commentId = newComment.get('id');
           newComment.save();
-          Ember.RSVP.all([newComment.save(), newPost.get('comments')]).then(function(promises) {
+          all([newComment.save(), newPost.get('comments')]).then(function(promises) {
             var comments = promises[1];
             comments.pushObject(newComment);
             newPost.save().then(function() {
@@ -228,11 +230,11 @@ describe('Integration: FirebaseAdapter - Updating records', function() {
       beforeEach(function(done) {
         app.User = DS.Model.extend({
           created: DS.attr('number'),
-          username: Ember.computed(function() {
+          username: computed(function() {
             return this.get('id');
           }),
           firstName: DS.attr('string'),
-          avatar: Ember.computed(function() {
+          avatar: computed(function() {
             return 'https://www.gravatar.com/avatar/' + md5(this.get('id')) + '.jpg?d=retro&size=80';
           }),
           posts: DS.hasMany('post', { async: true }),
@@ -258,7 +260,7 @@ describe('Integration: FirebaseAdapter - Updating records', function() {
           newUser.get('posts').then(function(posts) {
             posts.pushObjects([newPost1, newPost2, newPost3]);
             newUser.save().then(function() {
-              return Ember.RSVP.all([newPost1.save(), newPost2.save(), newPost3.save()]);
+              return all([newPost1.save(), newPost2.save(), newPost3.save()]);
             }).then(function(){
               done();
             });
@@ -282,9 +284,9 @@ describe('Integration: FirebaseAdapter - Updating records', function() {
                 posts = ps;
               });
             }).then(function() {
-              expect(Ember.A(posts).contains(newPost1)).to.equal(true);
-              expect(Ember.A(posts).contains(newPost2)).to.equal(true);
-              expect(Ember.A(posts).contains(newPost3)).to.equal(true);
+              expect(A(posts).contains(newPost1)).to.equal(true);
+              expect(A(posts).contains(newPost2)).to.equal(true);
+              expect(A(posts).contains(newPost3)).to.equal(true);
               done();
             });
           });
@@ -568,7 +570,7 @@ describe('Integration: FirebaseAdapter - Updating records', function() {
         const reference = firebaseTestRef.child('CapitalizedRelations');
         adapter._ref = reference;
         store.serializerFor('application').keyForRelationship = function(key) {
-          return Ember.String.capitalize(key);
+          return capitalize(key);
         };
 
         run(() => {
@@ -595,7 +597,7 @@ describe('Integration: FirebaseAdapter - Updating records', function() {
         const reference = firebaseTestRef.child('CapitalizedRelations');
         adapter._ref = reference;
         store.serializerFor('application').keyForRelationship = function(key) {
-          return Ember.String.capitalize(key);
+          return capitalize(key);
         };
 
         run(() => {
@@ -626,7 +628,7 @@ describe('Integration: FirebaseAdapter - Updating records', function() {
         const reference = firebaseTestRef.child('CapitalizedRelations');
         adapter._ref = reference;
         store.serializerFor('application').keyForRelationship = function(key) {
-          return Ember.String.capitalize(key);
+          return capitalize(key);
         };
 
         run(() => {
@@ -643,7 +645,7 @@ describe('Integration: FirebaseAdapter - Updating records', function() {
           });
 
           post.save().then(() => {
-            return Ember.RSVP.all([
+            return all([
               commentA.save(),
               commentB.save()
             ]);
@@ -667,7 +669,7 @@ describe('Integration: FirebaseAdapter - Updating records', function() {
         const reference = firebaseTestRef.child('CapitalizedRelations');
         adapter._ref = reference;
         store.serializerFor('tree-node').keyForRelationship = function(key) {
-          return Ember.String.capitalize(key);
+          return capitalize(key);
         };
 
         run(() => {
@@ -695,7 +697,7 @@ describe('Integration: FirebaseAdapter - Updating records', function() {
         const reference = firebaseTestRef.child('CapitalizedRelations');
         adapter._ref = reference;
         store.serializerFor('tree-node').keyForRelationship = function(key) {
-          return Ember.String.capitalize(key);
+          return capitalize(key);
         };
 
         run(() => {
@@ -731,7 +733,7 @@ describe('Integration: FirebaseAdapter - Updating records', function() {
         const reference = firebaseTestRef.child('CapitalizedRelations');
         adapter._ref = reference;
         store.serializerFor('tree-node').keyForRelationship = function(key) {
-          return Ember.String.capitalize(key);
+          return capitalize(key);
         };
 
         run(() => {

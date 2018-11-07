@@ -1,3 +1,4 @@
+import { click, fillIn, currentPath, find, visit } from '@ember/test-helpers';
 /* jshint expr:true */
 import {
   describe,
@@ -29,36 +30,30 @@ describe('Acceptance: /posts/new', function() {
     destroyApp(application);
   });
 
-  it('can visit /posts/new', function() {
-    visit('/posts/new');
+  it('can visit /posts/new', async function() {
+    await visit('/posts/new');
 
-    andThen(function() {
-      expect(currentPath()).to.equal('posts.new');
-    });
+    expect(currentPath()).to.equal('posts.new');
   });
 
   describe('creating a new post', function() {
 
-    beforeEach(() => {
-      visit('/posts/new');
-      fillIn('.post-publish [placeholder=Title]', 'AAA');
-      fillIn('.post-publish [placeholder=Username]', 'kanyewest');
-      fillIn('.post-publish [placeholder=Body]', 'things');
-      click('.post-publish button');
+    beforeEach(async () => {
+      await visit('/posts/new');
+      await fillIn('.post-publish [placeholder=Title]', 'AAA');
+      await fillIn('.post-publish [placeholder=Username]', 'kanyewest');
+      await fillIn('.post-publish [placeholder=Body]', 'things');
+      await click('.post-publish button');
     });
 
     it('navigates to the new post', function() {
-      andThen(function() {
-        expect(currentPath()).to.equal('post');
-      });
+      expect(currentPath()).to.equal('post');
     });
 
     it('creates the post with correct info', function() {
-      andThen(function() {
-        expect(find('.post-title').text().trim()).to.equal('AAA');
-        expect(find('.post-author').text().trim()).to.equal('kanyewest');
-        expect(find('.post-content > p').text().trim()).to.equal('things');
-      });
+      expect(find('.post-title').textContent.trim()).to.equal('AAA');
+      expect(find('.post-author').textContent.trim()).to.equal('kanyewest');
+      expect(find('.post-content > p').textContent.trim()).to.equal('things');
     });
 
   });  // creating a new post

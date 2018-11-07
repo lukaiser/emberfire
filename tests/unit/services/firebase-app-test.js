@@ -1,12 +1,11 @@
 /* jshint expr:true */
+import { setOwner } from '@ember/application';
+
 import { expect } from 'chai';
 import { it, describe } from 'mocha';
 import { setupTest } from 'ember-mocha';
 import firebase from 'firebase';
 import sinon from 'sinon';
-import Ember from 'ember';
-
-const { setOwner } = Ember;
 
 describe('FirebaseAppService', function() {
   setupTest('emberfire@service:firebase-app');

@@ -1,10 +1,11 @@
-import Ember from 'ember';
+import { Promise } from 'rsvp';
+import Controller from '@ember/controller';
 
-export default Ember.Controller.extend({
+export default Controller.extend({
   actions: {
     publishComment: function(post, comment) {
       comment.save().then(function() {
-        Ember.RSVP.Promise.cast(post.get('comments')).then(function(comments) {
+        Promise.cast(post.get('comments')).then(function(comments) {
           comments.addObject(comment);
           post.save().then(function() {}, function() {});
         });

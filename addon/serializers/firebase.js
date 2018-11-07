@@ -1,8 +1,7 @@
-import Ember from 'ember';
+import { isArray } from '@ember/array';
+import { assign } from '@ember/polyfills';
 import DS from 'ember-data';
 import firebase from 'firebase';
-
-const { assign } = Ember;
 
 /**
  * The Firebase serializer helps normalize relationships and can be extended on
@@ -125,11 +124,11 @@ export default DS.JSONSerializer.extend(DS.EmbeddedRecordsMixin, {
           let relationshipPayload = payload[relationshipKey];
           // embedded
           if (this.hasDeserializeRecordsOption(key)) {
-            if (typeof relationshipPayload === 'object' && !Ember.isArray(relationshipPayload)) {
+            if (typeof relationshipPayload === 'object' && !isArray(relationshipPayload)) {
               relationshipPayload = Object.keys(relationshipPayload).map((id) => {
                 return assign({ id: id }, relationshipPayload[id]);
               });
-            } else if (Ember.isArray(relationshipPayload)) {
+            } else if (isArray(relationshipPayload)) {
               relationshipPayload = this._addNumericIdsToEmbeddedArray(relationshipPayload);
             } else {
               throw new Error(`${modelClass.toString()} relationship ${meta.kind}('${meta.type}') must contain embedded records with an \`id\`. Example: { "${key}": { "${meta.type}_1": { "id": "${meta.type}_1" } } } instead got: ${JSON.stringify(payload[key])}`);
@@ -138,9 +137,9 @@ export default DS.JSONSerializer.extend(DS.EmbeddedRecordsMixin, {
 
           // normalized
           else {
-            if (typeof relationshipPayload === 'object' && !Ember.isArray(relationshipPayload)) {
+            if (typeof relationshipPayload === 'object' && !isArray(relationshipPayload)) {
               relationshipPayload = Object.keys(relationshipPayload);
-            } else if (Ember.isArray(relationshipPayload)) {
+            } else if (isArray(relationshipPayload)) {
               relationshipPayload = this._convertBooleanArrayToIds(relationshipPayload);
             } else {
               throw new Error(`${modelClass.toString()} relationship ${meta.kind}('${meta.type}') must be a key/value map. Example: { "${key}": { "${meta.type}_1": true } } instead got: ${JSON.stringify(payload[key])}`);

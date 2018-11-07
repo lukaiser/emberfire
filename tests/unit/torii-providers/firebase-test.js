@@ -1,9 +1,8 @@
-import Ember from 'ember';
+import { reject, resolve } from 'rsvp';
+import { run } from '@ember/runloop';
 import { it, describe } from 'mocha';
 import { setupTest } from 'ember-mocha';
 import sinon from 'sinon';
-
-const { run } = Ember;
 
 describe('FirebaseToriiProvider', function() {
   setupTest('emberfire@torii-provider:firebase');
@@ -49,7 +48,7 @@ describe('FirebaseToriiProvider', function() {
         let errorMock = sinon.spy();
         const stub =
             sinon.stub(authMock, 'signInWithPopup')
-                .returns(Ember.RSVP.reject(errorMock));
+                .returns(reject(errorMock));
 
         let provider = this.subject();
         run(function() {
@@ -67,7 +66,7 @@ describe('FirebaseToriiProvider', function() {
         let userMock = sinon.spy();
         const stub =
             sinon.stub(authMock, 'signInWithPopup')
-                .returns(Ember.RSVP.resolve(userMock));
+                .returns(resolve(userMock));
 
         this.registry.register(
             'firebase-auth-provider:other', OtherProvider,
@@ -87,7 +86,7 @@ describe('FirebaseToriiProvider', function() {
         const userMock = sinon.spy();
         const stub =
             sinon.stub(authMock, 'signInWithPopup')
-                .returns(Ember.RSVP.resolve(userMock));
+                .returns(resolve(userMock));
 
         let provider = this.subject();
         run(function() {
@@ -103,7 +102,7 @@ describe('FirebaseToriiProvider', function() {
         const user = {uid: 'bob', providerData: [{providerId: 'google.com'}]};
         const stub =
             sinon.stub(authMock, 'signInWithPopup')
-                .returns(Ember.RSVP.resolve({user: user}));
+                .returns(resolve({user: user}));
 
         let provider = this.subject();
         run(function() {
@@ -119,7 +118,7 @@ describe('FirebaseToriiProvider', function() {
         const userMock = sinon.spy();
         const stub =
             sinon.stub(authMock, 'signInWithPopup')
-                .returns(Ember.RSVP.resolve(userMock));
+                .returns(resolve(userMock));
 
         const addScopeStub =
             sinon.stub(ProviderMock.prototype, 'addScope');
@@ -145,7 +144,7 @@ describe('FirebaseToriiProvider', function() {
         const userMock = sinon.spy();
         const stub =
             sinon.stub(authMock, 'signInWithRedirect')
-                .returns(Ember.RSVP.resolve(userMock));
+                .returns(resolve(userMock));
 
         let provider = this.subject();
         run(function() {
@@ -167,7 +166,7 @@ describe('FirebaseToriiProvider', function() {
         let userMock = sinon.spy();
         const stub =
             sinon.stub(authMock, 'signInWithEmailAndPassword')
-                .returns(Ember.RSVP.resolve(userMock));
+                .returns(resolve(userMock));
 
         let provider = this.subject();
         run(function() {
@@ -187,7 +186,7 @@ describe('FirebaseToriiProvider', function() {
         let errorMock = sinon.spy();
         const stub =
             sinon.stub(authMock, 'signInWithEmailAndPassword')
-                .returns(Ember.RSVP.reject(errorMock));
+                .returns(reject(errorMock));
 
         let provider = this.subject();
         run(function() {
@@ -235,7 +234,7 @@ describe('FirebaseToriiProvider', function() {
         let userMock = sinon.spy();
         const stub =
             sinon.stub(authMock, 'signInWithEmailAndPassword')
-                .returns(Ember.RSVP.resolve(userMock));
+                .returns(resolve(userMock));
 
         let provider = this.subject();
         run(function() {
@@ -259,7 +258,7 @@ describe('FirebaseToriiProvider', function() {
         let errorMock = sinon.spy();
         const stub =
             sinon.stub(authMock, 'signInAnonymously')
-                .returns(Ember.RSVP.reject(errorMock));
+                .returns(reject(errorMock));
 
         let provider = this.subject();
         run(function() {
@@ -278,7 +277,7 @@ describe('FirebaseToriiProvider', function() {
         let userMock = sinon.spy();
         const stub =
             sinon.stub(authMock, 'signInAnonymously')
-                .returns(Ember.RSVP.resolve(userMock));
+                .returns(resolve(userMock));
 
         let provider = this.subject();
         run(function() {
@@ -300,7 +299,7 @@ describe('FirebaseToriiProvider', function() {
         let errorMock = sinon.spy();
         const stub =
             sinon.stub(authMock, 'signInWithCustomToken')
-                .returns(Ember.RSVP.reject(errorMock));
+                .returns(reject(errorMock));
 
         let provider = this.subject();
         run(function() {
@@ -320,7 +319,7 @@ describe('FirebaseToriiProvider', function() {
         let userMock = sinon.spy();
         const stub =
             sinon.stub(authMock, 'signInWithCustomToken')
-                .returns(Ember.RSVP.resolve(userMock));
+                .returns(resolve(userMock));
 
         let provider = this.subject();
         run(function() {
@@ -352,7 +351,7 @@ describe('FirebaseToriiProvider', function() {
         let userMock = sinon.spy();
         const stub =
             sinon.stub(authMock, 'signInWithCustomToken')
-                .returns(Ember.RSVP.resolve(userMock));
+                .returns(resolve(userMock));
 
         let provider = this.subject();
         run(function() {

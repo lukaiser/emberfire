@@ -1,11 +1,12 @@
+import { click, currentPath, find, visit } from '@ember/test-helpers';
 /* jshint expr:true */
+import { resolve, Promise } from 'rsvp';
 import {
   describe,
   it,
   beforeEach,
   afterEach
 } from 'mocha';
-import Ember from 'ember';
 import { expect } from 'chai';
 import sinon from 'sinon';
 import startApp from '../helpers/start-app';
@@ -46,12 +47,10 @@ describe('Acceptance: /auth', function() {
     unstubFirebase();
   });
 
-  it('can visit /auth', function() {
-    visit('/auth');
+  it('can visit /auth', async function() {
+    await visit('/auth');
 
-    andThen(function() {
-      expect(currentPath()).to.equal('auth');
-    });
+    expect(currentPath()).to.equal('auth');
   });
 
   describe('anonymous auth', function () {
@@ -67,27 +66,23 @@ describe('Acceptance: /auth', function() {
 
       signInAnonymouslyStub =
           sinon.stub(authMock, 'signInAnonymously')
-              .returns(Ember.RSVP.resolve(authData));
+              .returns(resolve(authData));
     });
 
     afterEach(function() {
       signInAnonymouslyStub.restore();
     });
 
-    it('creates a session when the auth method returns data', function () {
-      visit('/auth');
+    it('creates a session when the auth method returns data', async function() {
+      await visit('/auth');
 
-      andThen(function() {
-        expect(find('.user-data-is-authenticated').text().trim()).to.equal('false');
-      });
+      expect(find('.user-data-is-authenticated').textContent.trim()).to.equal('false');
 
-      click('.auth-as-anon');
+      await click('.auth-as-anon');
 
-      andThen(function() {
-        expect(find('.user-data-is-authenticated').text().trim()).to.equal('true');
-        expect(find('.user-data-provider').text().trim()).to.equal('anonymous');
-        expect(find('.user-data-uid').text().trim()).to.equal('uid1234');
-      });
+      expect(find('.user-data-is-authenticated').textContent.trim()).to.equal('true');
+      expect(find('.user-data-provider').textContent.trim()).to.equal('anonymous');
+      expect(find('.user-data-uid').textContent.trim()).to.equal('uid1234');
     });
 
   }); // anonymous auth
@@ -102,23 +97,19 @@ describe('Acceptance: /auth', function() {
         providerData: [{providerId: 'twitter.com'}],
       };
 
-      signInWithPopupStub.returns(Ember.RSVP.Promise.resolve(authData));
+      signInWithPopupStub.returns(Promise.resolve(authData));
     });
 
-    it('creates a session when the auth method returns data', function () {
-      visit('/auth');
+    it('creates a session when the auth method returns data', async function() {
+      await visit('/auth');
 
-      andThen(function() {
-        expect(find('.user-data-is-authenticated').text().trim()).to.equal('false');
-      });
+      expect(find('.user-data-is-authenticated').textContent.trim()).to.equal('false');
 
-      click('.auth-as-twitter');
+      await click('.auth-as-twitter');
 
-      andThen(function() {
-        expect(find('.user-data-is-authenticated').text().trim()).to.equal('true');
-        expect(find('.user-data-provider').text().trim()).to.equal('twitter.com');
-        expect(find('.user-data-uid').text().trim()).to.equal(authData.uid);
-      });
+      expect(find('.user-data-is-authenticated').textContent.trim()).to.equal('true');
+      expect(find('.user-data-provider').textContent.trim()).to.equal('twitter.com');
+      expect(find('.user-data-uid').textContent.trim()).to.equal(authData.uid);
     });
 
   }); // twitter auth
@@ -133,23 +124,19 @@ describe('Acceptance: /auth', function() {
         providerData: [{providerId: 'facebook.com'}],
       };
 
-      signInWithPopupStub.returns(Ember.RSVP.Promise.resolve(authData));
+      signInWithPopupStub.returns(Promise.resolve(authData));
     });
 
-    it('creates a session when the auth method returns data', function () {
-      visit('/auth');
+    it('creates a session when the auth method returns data', async function() {
+      await visit('/auth');
 
-      andThen(function() {
-        expect(find('.user-data-is-authenticated').text().trim()).to.equal('false');
-      });
+      expect(find('.user-data-is-authenticated').textContent.trim()).to.equal('false');
 
-      click('.auth-as-facebook');
+      await click('.auth-as-facebook');
 
-      andThen(function() {
-        expect(find('.user-data-is-authenticated').text().trim()).to.equal('true');
-        expect(find('.user-data-provider').text().trim()).to.equal('facebook.com');
-        expect(find('.user-data-uid').text().trim()).to.equal(authData.uid);
-      });
+      expect(find('.user-data-is-authenticated').textContent.trim()).to.equal('true');
+      expect(find('.user-data-provider').textContent.trim()).to.equal('facebook.com');
+      expect(find('.user-data-uid').textContent.trim()).to.equal(authData.uid);
     });
 
   }); // facebook auth
@@ -164,23 +151,19 @@ describe('Acceptance: /auth', function() {
         providerData: [{providerId: 'github.com'}],
       };
 
-      signInWithPopupStub.returns(Ember.RSVP.Promise.resolve(authData));
+      signInWithPopupStub.returns(Promise.resolve(authData));
     });
 
-    it('creates a session when the auth method returns data', function () {
-      visit('/auth');
+    it('creates a session when the auth method returns data', async function() {
+      await visit('/auth');
 
-      andThen(function() {
-        expect(find('.user-data-is-authenticated').text().trim()).to.equal('false');
-      });
+      expect(find('.user-data-is-authenticated').textContent.trim()).to.equal('false');
 
-      click('.auth-as-github');
+      await click('.auth-as-github');
 
-      andThen(function() {
-        expect(find('.user-data-is-authenticated').text().trim()).to.equal('true');
-        expect(find('.user-data-provider').text().trim()).to.equal('github.com');
-        expect(find('.user-data-uid').text().trim()).to.equal(authData.uid);
-      });
+      expect(find('.user-data-is-authenticated').textContent.trim()).to.equal('true');
+      expect(find('.user-data-provider').textContent.trim()).to.equal('github.com');
+      expect(find('.user-data-uid').textContent.trim()).to.equal(authData.uid);
     });
 
   }); // google auth
@@ -195,23 +178,19 @@ describe('Acceptance: /auth', function() {
         providerData: [{providerId: 'google.com'}],
       };
 
-      signInWithPopupStub.returns(Ember.RSVP.Promise.resolve(authData));
+      signInWithPopupStub.returns(Promise.resolve(authData));
     });
 
-    it('creates a session when the auth method returns data', function () {
-      visit('/auth');
+    it('creates a session when the auth method returns data', async function() {
+      await visit('/auth');
 
-      andThen(function() {
-        expect(find('.user-data-is-authenticated').text().trim()).to.equal('false');
-      });
+      expect(find('.user-data-is-authenticated').textContent.trim()).to.equal('false');
 
-      click('.auth-as-google');
+      await click('.auth-as-google');
 
-      andThen(function() {
-        expect(find('.user-data-is-authenticated').text().trim()).to.equal('true');
-        expect(find('.user-data-provider').text().trim()).to.equal('google.com');
-        expect(find('.user-data-uid').text().trim()).to.equal(authData.uid);
-      });
+      expect(find('.user-data-is-authenticated').textContent.trim()).to.equal('true');
+      expect(find('.user-data-provider').textContent.trim()).to.equal('google.com');
+      expect(find('.user-data-uid').textContent.trim()).to.equal(authData.uid);
     });
 
   }); // google auth

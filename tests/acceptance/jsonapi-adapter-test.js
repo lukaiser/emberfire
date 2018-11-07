@@ -1,3 +1,4 @@
+import { click, find, visit } from '@ember/test-helpers';
 /* jshint expr:true */
 import {
   describe,
@@ -32,39 +33,31 @@ describe('Acceptance: JSONAPIAdapter still works', function() {
     destroyApp(application);
   });
 
-  it('can load widgets', function() {
-    visit('/widgets');
+  it('can load widgets', async function() {
+    await visit('/widgets');
 
-    andThen(function() {
-      expect(find('[data-test-widget=1] .name').text()).to.equal('WIDGET 1');
-    });
+    expect(find('[data-test-widget=1] .name').textContent).to.equal('WIDGET 1');
   });
 
-  it('can create widgets', function() {
-    visit('/widgets');
-    click('[data-test-create-widget]');
+  it('can create widgets', async function() {
+    await visit('/widgets');
+    await click('[data-test-create-widget]');
 
-    andThen(function() {
-      expect(find('[data-test-widget=2] .name').text()).to.equal('WIDGET 2');
-    });
+    expect(find('[data-test-widget=2] .name').textContent).to.equal('WIDGET 2');
   });
 
-  it('can update a widget with sideloaded data', function() {
-    visit('/widgets');
-    click('[data-test-update-widget=1]');
+  it('can update a widget with sideloaded data', async function() {
+    await visit('/widgets');
+    await click('[data-test-update-widget=1]');
 
-    andThen(function() {
-      expect(find('[data-test-widget=1] .name').text()).to.equal('WIDGET 1 - UPDATED');
-    });
+    expect(find('[data-test-widget=1] .name').textContent).to.equal('WIDGET 1 - UPDATED');
   });
 
-  it('can handle pushing a response with empty data', function() {
-    visit('/widgets/current');
+  it('can handle pushing a response with empty data', async function() {
+    await visit('/widgets/current');
 
-    andThen(function() {
-      var textIgnoringWhitespace = find('[data-test-current-widget]').text().replace(/\s+/g, ' ');
-      expect(textIgnoringWhitespace).to.equal(' Currently: there is no current widget ');
-    });
+    var textIgnoringWhitespace = find('[data-test-current-widget]').textContent.replace(/\s+/g, ' ');
+    expect(textIgnoringWhitespace).to.equal(' Currently: there is no current widget ');
   });
 
 });

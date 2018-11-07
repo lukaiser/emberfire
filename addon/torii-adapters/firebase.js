@@ -1,7 +1,9 @@
-import Ember from 'ember';
+import { resolve, reject, Promise } from 'rsvp';
+import { inject as service } from '@ember/service';
+import EmberObject from '@ember/object';
 
-export default Ember.Object.extend({
-  firebase: Ember.inject.service(),
+export default EmberObject.extend({
+  firebase: service(),
 
   /**
    * Extacts session information from authentication response
@@ -10,7 +12,7 @@ export default Ember.Object.extend({
    * @return {Promise}
    */
   open(user) {
-    return Ember.RSVP.resolve({
+    return resolve({
       provider: this.extractProviderId_(user),
       uid: user.uid,
       currentUser: user
@@ -33,11 +35,11 @@ export default Ember.Object.extend({
       })
       .then((user) => {
         if (!user) {
-          return Ember.RSVP.reject(new Error('No session available'));
+          return reject(new Error('No session available'));
         }
         return this.open(user);
       })
-      .catch((err) => Ember.RSVP.reject(err));
+      .catch((err) => reject(err));
   },
 
 
@@ -61,7 +63,7 @@ export default Ember.Object.extend({
    * @private
    */
   fetchAuthState_() {
-    return new Ember.RSVP.Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       let auth = this.get('firebase').auth();
       const unsub = auth.onAuthStateChanged((user) => {
         unsub();

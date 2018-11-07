@@ -1,5 +1,7 @@
 /* jshint expr:true */
-import Ember from 'ember';
+import { capitalize } from '@ember/string';
+
+import { run } from '@ember/runloop';
 import DS from 'ember-data';
 import { it, describe } from 'mocha';
 import { setupTest } from 'ember-mocha';
@@ -11,8 +13,6 @@ import stubFirebase from 'dummy/tests/helpers/stub-firebase';
 import unstubFirebase from 'dummy/tests/helpers/unstub-firebase';
 import createOfflineRef from 'dummy/tests/helpers/create-offline-ref';
 import destroyFirebaseApps from 'dummy/tests/helpers/destroy-firebase-apps';
-
-const { run } = Ember;
 
 describe('FirebaseAdapter', function() {
   setupTest('emberfire@adapter:firebase', {
@@ -60,7 +60,7 @@ describe('FirebaseAdapter', function() {
     });
 
     ['key', 'value', 'priority'].forEach(function (k) {
-      var upperK = Ember.String.capitalize(k);
+      var upperK = capitalize(k);
 
       it(`orderBy: "_${k}" calls orderBy${upperK}`, function () {
         stub = sinon.stub(ref, 'orderBy' + upperK);

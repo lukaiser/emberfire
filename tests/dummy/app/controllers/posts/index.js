@@ -1,7 +1,8 @@
-import Ember from 'ember';
+import { sort } from '@ember/object/computed';
+import Controller from '@ember/controller';
 
-export default Ember.Controller.extend({
-  posts: Ember.computed.sort('model', function (a, b) {
+export default Controller.extend({
+  posts: sort('model', function (a, b) {
     return b.get('published') - a.get('published');
   })
 });

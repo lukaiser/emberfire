@@ -1,4 +1,5 @@
-import Ember from 'ember';
+import { Promise } from 'rsvp';
+import { run } from '@ember/runloop';
 import startApp from 'dummy/tests/helpers/start-app';
 import destroyApp from 'dummy/tests/helpers/destroy-app';
 import { it } from 'mocha';
@@ -6,8 +7,6 @@ import stubFirebase from 'dummy/tests/helpers/stub-firebase';
 import unstubFirebase from 'dummy/tests/helpers/unstub-firebase';
 import createTestRef from 'dummy/tests/helpers/create-test-ref';
 import replaceAppRef from 'dummy/tests/helpers/replace-app-ref';
-
-const { run } = Ember;
 
 describe('Integration: FirebaseAdapter - Deleting records', function() {
   var app, store, adapter, firebaseTestRef;
@@ -155,7 +154,7 @@ describe('Integration: FirebaseAdapter - Deleting records', function() {
           });
           childId = child.get('id');
 
-          Ember.RSVP.Promise.cast(parent.get('children')).then(function(children) {
+          Promise.cast(parent.get('children')).then(function(children) {
             children.pushObject(child);
             children.pushObject(store.createRecord('treeNode', {
               label: 'Child 2'

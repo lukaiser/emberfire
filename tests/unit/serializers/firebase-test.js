@@ -1,5 +1,7 @@
 /* jshint expr:true */
-import Ember from 'ember';
+import { capitalize } from '@ember/string';
+
+import { assign } from '@ember/polyfills';
 import { expect } from 'chai';
 import { it, describe } from 'mocha';
 import { setupTest } from 'ember-mocha';
@@ -9,8 +11,6 @@ import Post from 'dummy/models/post';
 import WithDate from 'dummy/models/with-date';
 import Comment from 'dummy/models/comment';
 import User from 'dummy/models/user';
-
-const { assign } = Ember;
 
 describe('FirebaseSerializer', function() {
   setupTest('emberfire@serializer:firebase', {
@@ -274,7 +274,7 @@ describe('FirebaseSerializer', function() {
       it('respects keyForRelationship in belongsTo', function() {
         let serializer = this.subject();
         serializer.keyForRelationship = function(key) {
-          return Ember.String.capitalize(key);
+          return capitalize(key);
         };
 
         let { data } = serializer.normalize(Post, {
@@ -291,7 +291,7 @@ describe('FirebaseSerializer', function() {
       it('respects keyForRelationship in hasMany', function() {
         let serializer = this.subject();
         serializer.keyForRelationship = function(key) {
-          return Ember.String.capitalize(key);
+          return capitalize(key);
         };
 
         let { data } = serializer.normalize(Post, {

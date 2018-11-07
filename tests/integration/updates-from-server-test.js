@@ -1,4 +1,4 @@
-import Ember from 'ember';
+import { run } from '@ember/runloop';
 import DS from 'ember-data';
 import startApp from 'dummy/tests/helpers/start-app';
 import destroyApp from 'dummy/tests/helpers/destroy-app';
@@ -7,8 +7,6 @@ import stubFirebase from 'dummy/tests/helpers/stub-firebase';
 import unstubFirebase from 'dummy/tests/helpers/unstub-firebase';
 import createTestRef from 'dummy/tests/helpers/create-test-ref';
 import replaceAppRef from 'dummy/tests/helpers/replace-app-ref';
-
-const { run } = Ember;
 
 describe('Integration: FirebaseAdapter - Updates from server', function() {
   var app, store, adapter, firebaseTestRef;

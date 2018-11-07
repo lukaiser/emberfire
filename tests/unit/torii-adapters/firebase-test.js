@@ -1,10 +1,9 @@
-import Ember from 'ember';
+import { Promise, resolve, reject } from 'rsvp';
+import { run } from '@ember/runloop';
 import { it, describe } from 'mocha';
 import { setupTest } from 'ember-mocha';
 import { expect } from 'chai';
 import sinon from 'sinon';
-
-const { run } = Ember;
 
 describe('FirebaseToriiAdapter', function() {
   setupTest('emberfire@torii-adapter:firebase');
@@ -38,7 +37,7 @@ describe('FirebaseToriiAdapter', function() {
 
       run(function() {
         const result = adapter.open(currentUser);
-        expect(result).to.be.an.instanceof(Ember.RSVP.Promise);
+        expect(result).to.be.an.instanceof(Promise);
       });
     });
 
@@ -122,7 +121,7 @@ describe('FirebaseToriiAdapter', function() {
 
       run(function() {
         const result = adapter.open(currentUser);
-        expect(result).to.be.an.instanceof(Ember.RSVP.Promise, 'return is a promise');
+        expect(result).to.be.an.instanceof(Promise, 'return is a promise');
         result.then(function(session) {
           expect(session.currentUser).to.be.equal(currentUser);
           done();
@@ -139,7 +138,7 @@ describe('FirebaseToriiAdapter', function() {
       const currentUser = {uid: 'bob', providerData: [{providerId: 'twitter.com'}]};
       const redirectStub =
           sinon.stub(authMock, 'getRedirectResult')
-              .returns(Ember.RSVP.resolve(null));
+              .returns(resolve(null));
 
       const authStateStub =
           sinon.stub(authMock, 'onAuthStateChanged')
@@ -165,7 +164,7 @@ describe('FirebaseToriiAdapter', function() {
       const currentUser = {uid: 'bob', providerData: [{providerId: 'twitter.com'}]};
       const redirectStub =
           sinon.stub(authMock, 'getRedirectResult')
-              .returns(Ember.RSVP.resolve({user: currentUser}));
+              .returns(resolve({user: currentUser}));
 
       const authStateStub = sinon.stub(authMock, 'onAuthStateChanged')
           .returns(() => {})  // unsub
@@ -190,7 +189,7 @@ describe('FirebaseToriiAdapter', function() {
       const currentUser = {uid: 'bob', providerData: [{providerId: 'twitter.com'}]};
       const redirectStub =
           sinon.stub(authMock, 'getRedirectResult')
-              .returns(Ember.RSVP.resolve(null));
+              .returns(resolve(null));
 
       const authStateStub = sinon.stub(authMock, 'onAuthStateChanged')
           .returns(() => {})  // unsub
@@ -214,7 +213,7 @@ describe('FirebaseToriiAdapter', function() {
       const currentUser = {uid: 'bob', providerData: [{providerId: 'twitter.com'}]};
       const redirectStub =
           sinon.stub(authMock, 'getRedirectResult')
-              .returns(Ember.RSVP.resolve({user: currentUser}));
+              .returns(resolve({user: currentUser}));
 
       const authStateStub = sinon.stub(authMock, 'onAuthStateChanged')
           .returns(() => {})  // unsub
@@ -236,7 +235,7 @@ describe('FirebaseToriiAdapter', function() {
     it('rejects when redirect check rejects', function(done) {
       const redirectStub =
           sinon.stub(authMock, 'getRedirectResult')
-              .returns(Ember.RSVP.reject());
+              .returns(reject());
 
       const authStateStub = sinon.stub(authMock, 'onAuthStateChanged')
           .returns(() => {})  // unsub
@@ -258,7 +257,7 @@ describe('FirebaseToriiAdapter', function() {
     it('rejects when session is null', function(done) {
       const redirectStub =
           sinon.stub(authMock, 'getRedirectResult')
-              .returns(Ember.RSVP.resolve({user: null}));
+              .returns(resolve({user: null}));
 
       const authStateStub =
           sinon.stub(authMock, 'onAuthStateChanged')
@@ -280,7 +279,7 @@ describe('FirebaseToriiAdapter', function() {
     it('rejects when auth state fetch fails', function(done) {
       const redirectStub =
           sinon.stub(authMock, 'getRedirectResult')
-              .returns(Ember.RSVP.resolve({user: null}));
+              .returns(resolve({user: null}));
 
       const authStateStub =
           sinon.stub(authMock, 'onAuthStateChanged')
@@ -303,7 +302,7 @@ describe('FirebaseToriiAdapter', function() {
       const unsub = sinon.spy();
       const redirectStub =
           sinon.stub(authMock, 'getRedirectResult')
-              .returns(Ember.RSVP.resolve({user: null}));
+              .returns(resolve({user: null}));
 
       const authStateStub =
           sinon.stub(authMock, 'onAuthStateChanged')
@@ -326,7 +325,7 @@ describe('FirebaseToriiAdapter', function() {
       const unsub = sinon.spy();
       const redirectStub =
           sinon.stub(authMock, 'getRedirectResult')
-              .returns(Ember.RSVP.resolve({user: null}));
+              .returns(resolve({user: null}));
 
       const authStateStub =
           sinon.stub(authMock, 'onAuthStateChanged')
@@ -353,12 +352,12 @@ describe('FirebaseToriiAdapter', function() {
     it('returns a promise', function() {
       const signOutStub =
           sinon.stub(authMock, 'signOut')
-              .returns(Ember.RSVP.resolve());
+              .returns(resolve());
 
       const adapter = this.subject();
       run(function() {
         const result = adapter.close();
-        expect(result).to.be.an.instanceof(Ember.RSVP.Promise, 'return is a promise');
+        expect(result).to.be.an.instanceof(Promise, 'return is a promise');
         signOutStub.restore();
       });
     });
@@ -366,7 +365,7 @@ describe('FirebaseToriiAdapter', function() {
     it('calls auth.signOut()', function() {
       const signOutStub =
           sinon.stub(authMock, 'signOut')
-              .returns(Ember.RSVP.resolve());
+              .returns(resolve());
 
       const adapter = this.subject();
       run(function() {

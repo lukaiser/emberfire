@@ -1,8 +1,10 @@
-import Ember from 'ember';
+import { hash } from 'rsvp';
+import EmberObject from '@ember/object';
+import Controller from '@ember/controller';
 
-export default Ember.Controller.extend({
+export default Controller.extend({
   init: function() {
-    this.set('post',  Ember.Object.create());
+    this.set('post',  EmberObject.create());
   },
   postIsValid: function() {
     var isValid = true;
@@ -16,7 +18,7 @@ export default Ember.Controller.extend({
   actions: {
     publishPost: function() {
       if (!this.postIsValid()) { return; }
-      Ember.RSVP.hash({
+      hash({
         user: this.get('util').getUserByUsername(this.get('post.username'))
       })
       .then(function(promises) {

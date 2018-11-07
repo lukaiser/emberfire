@@ -1,14 +1,14 @@
-import Ember from 'ember';
+import { reject } from 'rsvp';
+import { inject as service } from '@ember/service';
+import EmberObject from '@ember/object';
+import { getOwner } from '@ember/application';
 import Waitable from '../mixins/waitable';
 
-const { getOwner } = Ember;
-
-export default Ember.Object.extend(Waitable, {
-  firebase: Ember.inject.service(),
+export default EmberObject.extend(Waitable, {
+  firebase: service(),
 
   open(options) {
     var providerId = options.provider;
-    var reject = Ember.RSVP.reject;
 
     if (!providerId) {
       return reject(new Error('`provider` must be supplied'));
@@ -72,7 +72,7 @@ export default Ember.Object.extend(Waitable, {
       return result;
     }).catch((err) => {
       this._decrementWaiters();
-      return Ember.RSVP.reject(err);
+      return reject(err);
     });
   }
 });

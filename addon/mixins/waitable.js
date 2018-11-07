@@ -1,6 +1,8 @@
+import { registerWaiter } from '@ember/test';
+import Mixin from '@ember/object/mixin';
 import Ember from 'ember';
 
-export default Ember.Mixin.create({
+export default Mixin.create({
 
   init() {
     this._super.apply(this, arguments);
@@ -44,7 +46,7 @@ export default Ember.Mixin.create({
     this._waiter = () => {
       return this._shouldWait();
     };
-    Ember.Test.registerWaiter(this._waiter);
+    registerWaiter(this._waiter);
   },
 
 });

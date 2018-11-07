@@ -1,8 +1,7 @@
-import Ember from 'ember';
+import Component from '@ember/component';
+import { Promise, hash } from 'rsvp';
 
-var Promise = Ember.RSVP.Promise;
-
-export default Ember.Component.extend({
+export default Component.extend({
   classNames: ['post'],
   classNameBindings: ['isExpanded:post-expanded', 'isSingle:post-single'],
   commentUsername: '',
@@ -20,7 +19,7 @@ export default Ember.Component.extend({
     publishComment: function() {
       if (!this.commentIsValid()) { return; }
       var store = this.get('store');
-      Ember.RSVP.hash({
+      hash({
         user: this.get('util').getUserByUsername(this.get('commentUsername'))
       }).then(function(promises) {
         // Create a new comment

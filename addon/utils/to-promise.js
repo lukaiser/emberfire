@@ -1,16 +1,17 @@
-import Ember from 'ember';
+import { run } from '@ember/runloop';
+import { Promise } from 'rsvp';
 
 export default function(fn, context, _args, errorMsg) {
   var args = _args || [];
-  return new Ember.RSVP.Promise(function(resolve, reject) {
+  return new Promise(function(resolve, reject) {
     var callback = function(error) {
       if (error) {
         if (errorMsg && typeof error === 'object') {
           error.location = errorMsg;
         }
-        Ember.run(null, reject, error);
+        run(null, reject, error);
       } else {
-        Ember.run(null, resolve);
+        run(null, resolve);
       }
     };
     args.push(callback);

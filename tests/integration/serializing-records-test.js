@@ -1,4 +1,5 @@
-import Ember from 'ember';
+import { run } from '@ember/runloop';
+import { computed } from '@ember/object';
 import DS from 'ember-data';
 import startApp from 'dummy/tests/helpers/start-app';
 import destroyApp from 'dummy/tests/helpers/destroy-app';
@@ -41,11 +42,11 @@ describe('Integration: FirebaseSerializer - Serializing records', function() {
       beforeEach(function(done) {
         app.User = DS.Model.extend({
           created: DS.attr('number'),
-          username: Ember.computed(function() {
+          username: computed(function() {
             return this.get('id');
           }),
           firstName: DS.attr('string'),
-          avatar: Ember.computed(function() {
+          avatar: computed(function() {
             return 'https://www.gravatar.com/avatar/' + md5(this.get('id')) + '.jpg?d=retro&size=80';
           }),
           posts: DS.hasMany('post', { async: true }),
@@ -55,7 +56,7 @@ describe('Integration: FirebaseSerializer - Serializing records', function() {
         adapter._ref = firebaseTestRef.child('normalized');
         serializer = store.serializerFor('user');
 
-        Ember.run(function() {
+        run(function() {
           newUser = store.createRecord('user', { firstName: 'Tim' });
           newComment = store.createRecord('comment', {
             body: 'This is a new comment'

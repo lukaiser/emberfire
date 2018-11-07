@@ -1,3 +1,4 @@
+import { find, click, findAll, currentPath, visit } from '@ember/test-helpers';
 /* jshint expr:true */
 import {
   // describe,
@@ -28,52 +29,40 @@ describe('Acceptance: /posts', function() {
     destroyApp(application);
   });
 
-  it('can visit /posts', function() {
-    visit('/posts');
+  it('can visit /posts', async function() {
+    await visit('/posts');
 
-    andThen(function() {
-      expect(currentPath()).to.equal('posts.index');
-    });
+    expect(currentPath()).to.equal('posts.index');
   });
 
-  it('shows only the latest 20 results', function() {
-    visit('/posts');
+  it('shows only the latest 20 results', async function() {
+    await visit('/posts');
 
-    andThen(function() {
-      expect(find('.post-slug').length).to.equal(20);
-    });
+    expect(findAll('.post-slug').length).to.equal(20);
   });
 
-  it('shows latest post first', function() {
-    visit('/posts');
+  it('shows latest post first', async function() {
+    await visit('/posts');
 
-    andThen(function() {
-      expect(find('.post-slug-title:first a').text().trim()).to.equal('Post 21');
-    });
+    expect(find('.post-slug-title:first a').textContent.trim()).to.equal('Post 21');
   });
 
-  it('shows second post last', function() {
-    visit('/posts');
+  it('shows second post last', async function() {
+    await visit('/posts');
 
-    andThen(function() {
-      expect(find('.post-slug-title:last a').text().trim()).to.equal('Post 2');
-    });
+    expect(find('.post-slug-title:last a').textContent.trim()).to.equal('Post 2');
   });
 
-  it('links to each post', function() {
-    visit('/posts');
+  it('links to each post', async function() {
+    await visit('/posts');
 
-    andThen(function() {
-      expect(find('.post-slug-title:first a').attr('href')).to.equal('/post/post_21');
-    });
+    expect(find('.post-slug-title:first a').getAttribute('href')).to.equal('/post/post_21');
   });
 
-  it('navigates to the correct route, when clicking on a post link', function() {
-    visit('/posts');
-    click('.post-slug-title:first a');
+  it('navigates to the correct route, when clicking on a post link', async function() {
+    await visit('/posts');
+    await click('.post-slug-title:first a');
 
-    andThen(function() {
-      expect(currentPath()).to.equal('post');
-    });
+    expect(currentPath()).to.equal('post');
   });
 });

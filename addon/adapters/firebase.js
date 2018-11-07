@@ -1,15 +1,19 @@
+import { camelize } from '@ember/string';
+import { isNone } from '@ember/utils';
+import { run, bind, later } from '@ember/runloop';
+import { inject as service } from '@ember/service';
+import { A, isArray } from '@ember/array';
+import { assign } from '@ember/polyfills';
+import RSVP, { Promise, allSettled, reject } from 'rsvp';
 import Ember from 'ember';
 import DS from 'ember-data';
 import Waitable from '../mixins/waitable';
 import toPromise from '../utils/to-promise';
 
-const { assign, RSVP } = Ember;
-const { Promise } = RSVP;
-
 import { pluralize } from 'ember-inflector';
 
 var uniq = function (arr) {
-  var ret = Ember.A();
+  var ret = A();
 
   arr.forEach(function(k) {
     if (ret.indexOf(k) < 0) {
@@ -38,8 +42,8 @@ var isInteger = Number.isInteger || function(value) {
  * otherwise.
  */
 export default DS.Adapter.extend(Waitable, {
-  firebase: Ember.inject.service(),
-  store: Ember.inject.service(),
+  firebase: service(),
+  store: service(),
   defaultSerializer: '-firebase',
 
 
@@ -182,7 +186,7 @@ export default DS.Adapter.extend(Waitable, {
       var called = false;
       ref.on('value', (snapshot) => {
         if (called) {
-          Ember.run(() => {
+          run(() => {
             this._handleChildValue(store, typeClass, snapshot);
           });
         }
@@ -239,7 +243,7 @@ export default DS.Adapter.extend(Waitable, {
 
     ref = this.applyQueryToRef(ref, query);
 
-    ref.on('child_added', Ember.run.bind(this, function (snapshot) {
+    ref.on('child_added', bind(this, function (snapshot) {
       var record = store.peekRecord(modelName, this._getKey(snapshot));
 
       if (!record || !record.__listening) {
@@ -258,7 +262,7 @@ export default DS.Adapter.extend(Waitable, {
     // value listener after a store.push. `child_moved` is
     // a much less common case because it relates to priority
 
-    ref.on('child_removed', Ember.run.bind(this, function (snapshot) {
+    ref.on('child_removed', bind(this, function (snapshot) {
       var record = store.peekRecord(modelName, this._getKey(snapshot));
       if (record) {
         recordArray.get('content').removeObject(record._internalModel);
@@ -346,7 +350,7 @@ export default DS.Adapter.extend(Waitable, {
    * Determine if the current type is already listening for children events
    */
   _findAllHasEventsForType(typeClass) {
-    return !Ember.isNone(this._findAllMapForType[typeClass.modelName]);
+    return !isNone(this._findAllMapForType[typeClass.modelName]);
   },
 
 
@@ -358,7 +362,7 @@ export default DS.Adapter.extend(Waitable, {
     var modelName = typeClass.modelName;
     this._findAllMapForType[modelName] = true;
 
-    ref.on('child_added', Ember.run.bind(this, function (snapshot) {
+    ref.on('child_added', bind(this, function (snapshot) {
       if (!store.hasRecordForId(modelName, this._getKey(snapshot))) {
         this._handleChildValue(store, typeClass, snapshot);
       }
@@ -433,7 +437,7 @@ export default DS.Adapter.extend(Waitable, {
       const isEmbedded = this.isRelationshipEmbedded(store, typeClass.modelName, relationship);
       const hasMany = relationship.kind === 'hasMany';
       if (hasMany || isEmbedded) {
-          if (!Ember.isNone(data)) {
+          if (!isNone(data)) {
             relationshipsToSave.push({
               data:data,
               relationship:relationship,
@@ -464,11 +468,11 @@ export default DS.Adapter.extend(Waitable, {
             }
           }
         );
-        return Ember.RSVP.allSettled(savedRelationships);
+        return allSettled(savedRelationships);
       }).catch((e) => {
         reportError([e]);
       }).then((results) => {
-        var rejected = Ember.A(results).filterBy('state', 'rejected');
+        var rejected = A(results).filterBy('state', 'rejected');
         if (rejected.length !== 0) {
           reportError(rejected.mapBy('reason').toArray());
         } else {
@@ -494,7 +498,7 @@ export default DS.Adapter.extend(Waitable, {
       })
       .catch((e) => {
         this._decrementWaiters();
-        return Ember.RSVP.reject(e);
+        return reject(e);
       });
   },
 
@@ -504,10 +508,10 @@ export default DS.Adapter.extend(Waitable, {
    * and then resolve once they have all settled
    */
   _saveHasManyRelationship(store, typeClass, relationship, ids, recordRef, recordCache) {
-    if (!Ember.isArray(ids)) {
+    if (!isArray(ids)) {
       throw new Error('hasMany relationships must must be an array');
     }
-    var idsCache = Ember.A(recordCache[relationship.key]);
+    var idsCache = A(recordCache[relationship.key]);
     var dirtyRecords = [];
 
     // Added
@@ -536,8 +540,8 @@ export default DS.Adapter.extend(Waitable, {
     // Combine all the saved records
     var savedRecords = dirtyRecords.concat(removedRecords);
     // Wait for all the updates to finish
-    return Ember.RSVP.allSettled(savedRecords).then((savedRecords) => {
-      var rejected = Ember.A(Ember.A(savedRecords).filterBy('state', 'rejected'));
+    return allSettled(savedRecords).then((savedRecords) => {
+      var rejected = A(A(savedRecords).filterBy('state', 'rejected'));
       if (rejected.get('length') === 0) {
         // Update the cache
         recordCache[relationship.key] = ids;
@@ -545,7 +549,7 @@ export default DS.Adapter.extend(Waitable, {
       }
       else {
         var error = new Error(`Some errors were encountered while saving a hasMany relationship ${relationship.parentType} -> ${relationship.type}`);
-            error.errors = Ember.A(rejected).mapBy('reason');
+            error.errors = A(rejected).mapBy('reason');
         throw error;
       }
     });
@@ -621,7 +625,7 @@ export default DS.Adapter.extend(Waitable, {
     if (record) {
       return record.save();
     }
-    return Ember.RSVP.Promise.reject(new Error(`Unable to find record with id ${id} from embedded relationship: ${JSON.stringify(relationship)}`));
+    return Promise.reject(new Error(`Unable to find record with id ${id} from embedded relationship: ${JSON.stringify(relationship)}`));
   },
 
 
@@ -639,7 +643,7 @@ export default DS.Adapter.extend(Waitable, {
    * Determines a path fo a given type
    */
   pathForType(modelName) {
-    var camelized = Ember.String.camelize(modelName);
+    var camelized = camelize(modelName);
     return pluralize(camelized);
   },
 
@@ -748,7 +752,7 @@ export default DS.Adapter.extend(Waitable, {
    * @private
    */
   _flushLater() {
-    Ember.run.later(this, this._flushQueue, this._queueFlushDelay);
+    later(this, this._flushQueue, this._queueFlushDelay);
   },
 
 
@@ -828,7 +832,7 @@ export default DS.Adapter.extend(Waitable, {
       if (relationship.kind === 'hasMany') {
         const relationshipPayload = payload[serializer.keyForRelationship(key)];
         if (!relationshipPayload) {
-          cache[key] = Ember.A();
+          cache[key] = A();
         } else {
           const isEmbedded = this.isRelationshipEmbedded(store, typeClass.modelName, relationship);
           if (isEmbedded) {
@@ -840,7 +844,7 @@ export default DS.Adapter.extend(Waitable, {
             }
           } else {
             const ids = Object.keys(relationshipPayload);
-            cache[key] = Ember.A(ids);
+            cache[key] = A(ids);
           }
         }
       }
