@@ -76,5 +76,13 @@
     "normalize-css": "^2.3.1",
     "sinon": "^7.1.1",
     "torii": "0.10.1"
+  },
+  "ember-addon": {
+    "configPath": "tests/dummy/config",
+    "fastbootDependencies": [
+      "firebase/app",
+      "firebase/auth",
+      "firebase/database"
+    ]
   }
 }
