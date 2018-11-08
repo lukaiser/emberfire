@@ -9,6 +9,9 @@ module.exports = {
       exclude: [],
       webpack: {
         // extra webpack configuration goes here
+      },
+      alias: {
+        'firebase': 'node_modules/firebase/firebase-app.js'
       }
     }
   },
